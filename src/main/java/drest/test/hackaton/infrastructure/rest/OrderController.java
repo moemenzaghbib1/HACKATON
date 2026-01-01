@@ -43,6 +43,12 @@ public class OrderController {
     public ResponseEntity<List<Order>> list() {
         return ResponseEntity.ok(listOrders.list());
     }
+    @GetMapping("/{id}")
+    public ResponseEntity<Order> getById(@PathVariable String id) {
+        return listOrders.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
+    }
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<Order> changeStatus(

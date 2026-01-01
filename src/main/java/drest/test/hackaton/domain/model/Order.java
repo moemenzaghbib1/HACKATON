@@ -9,11 +9,14 @@ import java.util.UUID;
  */
 public class Order {
 
-    private final String id;
-    private final String customerName;
-    private final List<OrderItem> items;
+    private String id;
+    private String customerName;
+    private List<OrderItem> items;
     private OrderStatus status;
 
+    /**
+     * Constructor used when creating a NEW order (API)
+     */
     public Order(String customerName, List<OrderItem> items) {
 
         // --- Domain validation rules ---
@@ -39,6 +42,19 @@ public class Order {
         this.status = OrderStatus.CREATED;
     }
 
+    /**
+     * Constructor used when LOADING from MongoDB
+     */
+    public Order(String id,
+                 String customerName,
+                 List<OrderItem> items,
+                 OrderStatus status) {
+        this.id = id;
+        this.customerName = customerName;
+        this.items = items;
+        this.status = status;
+    }
+
     // --- Business behaviors ---
     public void markAsPaid() {
         if (status != OrderStatus.CREATED) {
@@ -59,4 +75,9 @@ public class Order {
     public String getCustomerName() { return customerName; }
     public List<OrderItem> getItems() { return items; }
     public OrderStatus getStatus() { return status; }
+
+    // --- Setters (only what persistence needs) ---
+    public void setId(String id) { this.id = id; }
+
+    public void setStatus(OrderStatus status) { this.status = status; }
 }

@@ -12,6 +12,7 @@ import drest.test.hackaton.domain.model.OrderItem;
 import drest.test.hackaton.domain.model.OrderStatus;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -64,4 +65,9 @@ public class OrderService implements
     public java.util.List<Order> list() {
         return repository.findAll();
     }
+
+    public Optional<Order> findById(String id) {
+        return repository.findById(id);
+    }
+
 }
