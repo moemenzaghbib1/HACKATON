@@ -1,12 +1,22 @@
 package drest.test.hackaton.infrastructure.rest;
 
-import drest.test.hackaton.application.port.in.*;
+import drest.test.hackaton.application.port.in.ChangeOrderStatusUseCase;
+import drest.test.hackaton.application.port.in.CreateOrderRequest;
+import drest.test.hackaton.application.port.in.CreateOrderUseCase;
+import drest.test.hackaton.application.port.in.ListOrdersUseCase;
 import drest.test.hackaton.domain.model.Order;
 import drest.test.hackaton.domain.model.OrderStatus;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+/**
+ * REST Adapter
+ * Exposes HTTP endpoints and delegates work to application use cases.
+ * (Domain does not depend on Spring)
+ */
 @RestController
 @RequestMapping("/orders")
 public class OrderController {
@@ -24,18 +34,21 @@ public class OrderController {
     }
 
     @PostMapping
-    public Order create(@RequestBody CreateOrderCommand command) {
-        return createOrder.create(command);
+    public ResponseEntity<Order> create(@RequestBody CreateOrderRequest request) {
+        Order order = createOrder.create(request.toCommand());
+        return ResponseEntity.status(HttpStatus.CREATED).body(order);
     }
 
     @GetMapping
-    public List<Order> list() {
-        return listOrders.list();
+    public ResponseEntity<List<Order>> list() {
+        return ResponseEntity.ok(listOrders.list());
     }
 
     @PatchMapping("/{id}/status")
-    public Order changeStatus(@PathVariable String id,
-                              @RequestParam OrderStatus status) {
-        return changeStatus.changeStatus(id, status);
+    public ResponseEntity<Order> changeStatus(
+            @PathVariable String id,
+            @RequestParam OrderStatus status
+    ) {
+        return ResponseEntity.ok(changeStatus.changeStatus(id, status));
     }
 }
