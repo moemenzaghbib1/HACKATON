@@ -4,6 +4,8 @@ import drest.test.hackaton.application.port.out.OrderRepositoryPort;
 import drest.test.hackaton.domain.model.Order;
 import drest.test.hackaton.domain.model.OrderItem;
 import drest.test.hackaton.domain.model.OrderStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -33,7 +35,7 @@ public class MongoOrderRepositoryAdapter implements OrderRepositoryPort {
 
         OrderDocument saved = repo.save(doc);
 
-        // IMPORTANT — keep DB id and sync it back to the domain order
+        // sync generated id back to domain
         order.setId(saved.getId());
 
         return order;
@@ -43,6 +45,20 @@ public class MongoOrderRepositoryAdapter implements OrderRepositoryPort {
     public Optional<Order> findById(String id) {
 
         return repo.findById(id)
+                .map(d -> new Order(
+                        d.getId(),
+                        d.getCustomerName(),
+                        d.getItems().stream()
+                                .map(i -> new OrderItem(i.productId(), i.quantity()))
+                                .toList(),
+                        OrderStatus.valueOf(d.getStatus())
+                ));
+    }
+
+    @Override
+    public Page<Order> findAll(Pageable pageable) {
+
+        return repo.findAll(pageable)
                 .map(d -> new Order(
                         d.getId(),
                         d.getCustomerName(),
