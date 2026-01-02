@@ -1,6 +1,5 @@
 package drest.test.hackaton.application.service;
 
-
 import drest.test.hackaton.application.port.in.ChangeOrderStatusUseCase;
 import drest.test.hackaton.application.port.in.CreateOrderCommand;
 import drest.test.hackaton.application.port.in.CreateOrderUseCase;
@@ -41,7 +40,6 @@ public class OrderService implements
         Order order = new Order(command.customerName(), items);
 
         repository.save(order);
-
         publisher.publishOrderCreated(order);
 
         return order;
@@ -54,11 +52,21 @@ public class OrderService implements
                 .orElseThrow(() -> new IllegalArgumentException("Order not found"));
 
         switch (status) {
-            case PAID -> order.markAsPaid();
-            case CANCELLED -> order.cancel();
+            case PAID -> {
+                order.markAsPaid();
+                publisher.publishOrderPaid(order);
+            }
+            case CANCELLED -> {
+                order.cancel();
+                publisher.publishOrderCancelled(order);
+            }
+            default -> throw new IllegalArgumentException("Unsupported status: " + status);
         }
 
-        return repository.save(order);
+        // ✅ correct repository field
+        repository.save(order);
+
+        return order;
     }
 
     @Override
@@ -69,5 +77,4 @@ public class OrderService implements
     public Optional<Order> findById(String id) {
         return repository.findById(id);
     }
-
 }

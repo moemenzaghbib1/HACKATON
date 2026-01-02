@@ -11,6 +11,11 @@ class OrderEventListenerTest {
 
         OrderEventsListener listener = new OrderEventsListener();
 
-        assertDoesNotThrow(() -> listener.onMessage("TEST_EVENT"));
+        OrderEvent event = new OrderEvent(
+                "ORDER_CREATED",
+                "test-order-id"
+        );
+
+        assertDoesNotThrow(() -> listener.listen(event));
     }
 }
