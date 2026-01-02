@@ -9,6 +9,8 @@ import drest.test.hackaton.application.port.out.OrderRepositoryPort;
 import drest.test.hackaton.domain.model.Order;
 import drest.test.hackaton.domain.model.OrderItem;
 import drest.test.hackaton.domain.model.OrderStatus;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
@@ -70,9 +72,10 @@ public class OrderService implements
     }
 
     @Override
-    public java.util.List<Order> list() {
-        return repository.findAll();
+    public Page<Order> list(int page, int size) {
+        return repository.findAll(PageRequest.of(page, size));
     }
+
 
     public Optional<Order> findById(String id) {
         return repository.findById(id);

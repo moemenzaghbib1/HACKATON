@@ -6,6 +6,7 @@ import drest.test.hackaton.application.port.in.CreateOrderUseCase;
 import drest.test.hackaton.application.port.in.ListOrdersUseCase;
 import drest.test.hackaton.domain.model.Order;
 import drest.test.hackaton.domain.model.OrderStatus;
+import org.springframework.data.domain.Page;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -40,9 +41,13 @@ public class OrderController {
     }
 
     @GetMapping
-    public ResponseEntity<List<Order>> list() {
-        return ResponseEntity.ok(listOrders.list());
+    public ResponseEntity<Page<Order>> list(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int size
+    ) {
+        return ResponseEntity.ok(listOrders.list(page, size));
     }
+
     @GetMapping("/{id}")
     public ResponseEntity<Order> getById(@PathVariable String id) {
         return listOrders.findById(id)
