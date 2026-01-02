@@ -2,7 +2,13 @@ package drest.test.hackaton.application.port.in;
 
 import java.util.List;
 
-public record CreateOrderCommand(String customerName, List<ItemRequest> items) {
-
-    public record ItemRequest(String productId, int quantity) {}
+/**
+ * Application-level command representing the intent:
+ * "Create a new order"
+ */
+public record CreateOrderCommand(
+        String customerName,
+        List<ItemCommand> items
+) {
+    public record ItemCommand(String productId, int quantity) {}
 }
